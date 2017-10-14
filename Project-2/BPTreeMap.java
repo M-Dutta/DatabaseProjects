@@ -250,14 +250,20 @@ public class BpTreeMap <K extends Comparable <K>, V>
     	K lkey = n.key[n.key.length - 2];
     	
     	//if node!=leaf set n to the last reference 
-    	while(!n.isLeaf){
-    		for(int i = n.nKeys - 1 ; i >= 0; i--){
-    			if(n.key[i]!= null){
+    	while(!n.isLeaf)
+    	{
+    		for(int i = n.nKeys - 1 ; i >= 0; i--)
+    		{
+    			if(n.key[i]!= null)
+    			{
     				n = (Node) n.ref[i + 1];
     				i = n.nKeys;
-    				if(n.isLeaf){
-    					for(int j = n.nKeys; j >= 0; j-- ){
-    						if(n.key[j]!= null){
+    				if(n.isLeaf)
+    				{
+    					for(int j = n.nKeys; j >= 0; j-- )
+    					{
+    						if(n.key[j]!= null)
+    						{
     							lkey = n.key[j];
     							break;
     						}
@@ -269,9 +275,12 @@ public class BpTreeMap <K extends Comparable <K>, V>
     	}
     	
     	//if Node is a leaf, reverse lookup for first non null values
-    	if(n.isLeaf){
-    		for(int i = n.key.length - 2; i >= 0; i--){
-    			if(n.key[i] != null){
+    	if(n.isLeaf)
+    	{
+    		for(int i = n.key.length - 2; i >= 0; i--)
+    		{
+    			if(n.key[i] != null)
+    			{
     				lkey = n.key[i];
     				return lkey;
     			}
