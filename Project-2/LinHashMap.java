@@ -74,16 +74,16 @@ public class LinHashMap <K, V>
      * @param classV    the class for keys (V)
      * @param initSize  the initial number of home buckets (a power of 2, e.g., 4)
      */
-    public LinHashMap (Class <K> _classK, Class <V> _classV, int initSize)
+    public LinHashMap (Class <K> _classK, Class <V> _classV)//, int initSize)
     {
         classK = _classK;
         classV = _classV;
         hTable = new ArrayList <> ();
-        mod1   = initSize;
+        mod1   = 4;
         mod2   = 2 * mod1;
         
         // adding empty buckets to hash table
-        for(int i=0; i<initSize; i++){
+        for(int i=0; i<mod1; i++){
         	hTable.add(new Bucket(null));
         }
         
@@ -306,7 +306,7 @@ public class LinHashMap <K, V>
      */
     public static void main (String [] args)
     {
-        LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class,8);
+        LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class);
         
         int nKeys = 30;
         if (args.length == 1) nKeys = Integer.valueOf (args [0]);
