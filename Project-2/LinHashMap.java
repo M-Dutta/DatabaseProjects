@@ -302,42 +302,34 @@ public class LinHashMap <K, V>
         return key.hashCode () % mod2;
     } // h2
 
-    /********************************************************************************
+  /********************************************************************************
      * The main method used for testing.
      * @param  the command-line arguments (args [0] gives number of keys to insert)
      */
     public static void main (String [] args)
     {
+
+        int totalKeys    = 30;
+        boolean RANDOMLY = false;
+
         LinHashMap <Integer, Integer> ht = new LinHashMap <> (Integer.class, Integer.class);
-        
-        int nKeys = 30;
-        if (args.length == 1) nKeys = Integer.valueOf (args [0]);
-        for (int i = 1; i < nKeys; i += 2) ht.put (i, i * i);
-       
-        // random testing
-        out.println("Test - Value at Key12: " + ht.get(12));
-        ht.put(12, 50);
-        ht.put(18, 70);
-        ht.put(22, 90);
-        ht.put(28, 40);
-        out.println("Test - Value at Key1: " + ht.get(1));
-        out.println("Test - Value at Key5: " + ht.get(5));
-        out.println("Test - Value at Key12 (after put method): " + ht.get(12));
-        out.println("Test - Value at Key8: " + ht.get(8));
-        out.println("Test - Value at Key17: " + ht.get(17));
-        out.println("");
-        // end random testing
-        
-        out.println("(Printing Hash Table... only keys with values will appear as not null.)");
-        out.println("");
-        ht.print (); // print test/hash table
-        for (int i = 0; i < nKeys; i++) { // print keys and values
+        if (args.length == 1) totalKeys = Integer.valueOf (args [0]);
+
+        if (RANDOMLY) {
+            Random rng = new Random ();
+            for (int i = 1; i <= totalKeys; i += 2) ht.put (rng.nextInt (2 * totalKeys), i * i);
+        } else {
+            for (int i = 1; i <= totalKeys; i += 2) ht.put (i, i * i);
+        } // if
+
+        ht.print ();
+        for (int i = 0; i <= totalKeys; i++) {
             out.println ("key = " + i + " value = " + ht.get (i));
-        } // for loop
-        
+        } // for
         out.println ("-------------------------------------------");
-        out.println ("Average number of buckets accessed = " + ht.count / (double) nKeys);
-    
+        out.println ("Average number of buckets accessed = " + ht.count / (double) totalKeys);
     } // main
+
+} // LinHashMap class
 
 }
