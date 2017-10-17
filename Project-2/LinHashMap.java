@@ -151,15 +151,15 @@ public class LinHashMap <K, V>
     public V put (K key, V value)
     {
        int i = h (key);
-       if (i <0)	i=i*(-1);
+       if (i <0)	i=i*(-1); // COrrecting negative indexes
 
-       if(i<split){
+       if(i<split){		// Switch to another .next bucket
               i=h2(key);
-              if (i <0)	i=i*(-1);
+              if (i <0)	i=i*(-1); // COrrecting negative indexes
        }
       
-       Bucket temp = hTable.get(i);
-       if( temp.nKeys < SLOTS ) // Noi split Necessary
+       Bucket temp = hTable.get(i); //assign bucket in which to put
+       if( temp.nKeys < SLOTS ) // No split Necessary
        {  
               temp.key[temp.nKeys] = key;
               temp.value[temp.nKeys] = value;
@@ -171,7 +171,7 @@ public class LinHashMap <K, V>
     	   hTable.add(new Bucket(null));
     	   while(temp.next != null)
     		   temp = temp.next;
-    	   
+    	   //before split 
     	   if(temp.nKeys < SLOTS)
     	   {
     		   temp.key[temp.nKeys] = key;
@@ -179,7 +179,7 @@ public class LinHashMap <K, V>
     		   temp.nKeys++;
     	   }
     	   
-    	   else
+    	   else // after split
     	   { // add to new bucket
     		   temp.next = new Bucket(null);
     		   temp = temp.next;
@@ -191,18 +191,19 @@ public class LinHashMap <K, V>
     	   Bucket replacer = new Bucket(null); // bucket to replace split
     	   Bucket newTemp = new Bucket(null); // new bucket
     	   temp = hTable.get(split + 1); //the bucket to split
-    	   for(int m = 0; m<temp.nKeys; m++){
-    		   int i2 = h2(temp.key[m]);
-    		   if(i2 == split){ // splitting time
-    			   if(replacer.next ==null){
+    	   for(int j = 0; j<temp.nKeys; j++){
+    		   int i2 = h2(temp.key[j]);
+    		   if(i2 == split)
+    		   { // splitting time
+    			   if(replacer.next ==null)
+    			   {
     				   replacer.next = new Bucket(null);
     				   replacer.next = replacer;
     			   }   
-    			   replacer.key[replacer.nKeys] = temp.key[m];
-    			   replacer.value[replacer.nKeys] = temp.value[m];
+    			   replacer.key[replacer.nKeys] = temp.key[j];
+    			   replacer.value[replacer.nKeys] = temp.value[j];
     			   temp.nKeys++;
-    		   } 
-    		   
+    		   }     		   
     		   else
     		   { // new bucket time
     			   if(newTemp.next==null)
@@ -210,8 +211,8 @@ public class LinHashMap <K, V>
     				   newTemp.next = new Bucket(null);
     				   newTemp = newTemp.next;
     			   }
-    			   newTemp.key[newTemp.nKeys] = temp.key[m];
-    			   newTemp.value[newTemp.nKeys] = temp.value[m];  	
+    			   newTemp.key[newTemp.nKeys] = temp.key[j];
+    			   newTemp.value[newTemp.nKeys] = temp.value[j];  	
     		   } 
     	   } 
     	   // update split
@@ -244,7 +245,7 @@ public class LinHashMap <K, V>
      */
     private void print ()
     {
-    	out.println ("Hash Table (Linear Hashing) - Entries shown as Key:Value");
+    	out.println ("Hash Table (Linear Hashing) Table Format ==> Key:Value");
     	out.println ("-------------------------------------------");
     	
     	for(int i=0; i<hTable.size(); i++)
@@ -313,4 +314,3 @@ public class LinHashMap <K, V>
     } // main
 
 } // LinHashMap class
-
