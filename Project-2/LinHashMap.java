@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import static java.lang.System.out;
 import java.util.*;
 
+
 /************************************************************************************
  * This class provides hash maps that use the Linear Hashing algorithm.
  * A hash table is created that is an array of buckets.
@@ -115,8 +116,11 @@ public class LinHashMap <K, V>
     public V get (Object key)
     {
     	int i = h (key);
+    	if (i <0)	i=i*(-1);
+    	
     	if(i<split){
     		i=h2(key);
+    		if (i <0)	i=i*(-1);
     	}
     	Bucket temp = hTable.get(i);
     	if( temp.nKeys==0 ){ // check if bucket is empty
@@ -146,9 +150,13 @@ public class LinHashMap <K, V>
     public V put (K key, V value)
     {
        int i = h (key);
+       if (i <0)	i=i*(-1);
+
        if(i<split){
               i=h2(key);
+              if (i <0)	i=i*(-1);
        }
+      
        Bucket temp = hTable.get(i);
        if( temp.nKeys < SLOTS ){ // simple insert, no split
               temp.key[temp.nKeys] = key;
@@ -235,50 +243,44 @@ public class LinHashMap <K, V>
     		if( temp.next!=null ){
     			chain = true; // chain exists if there is a next element
     		}
-    		if(chain){ // printing chain of buckets
-    			for( int j=0; j<SLOTS; j++ ){
-    				out.print("");
-    				out.print(temp.key[j]);
-    				out.print(":");
-    				out.print(temp.value[j]);
-    				out.print("\t");
-    				if(SLOTS!=j+1){
-    					out.print("\t");
-    				} // end if
-    				else{
-    					out.print(" \t(chain) =>");
-    				} // end else
-    			} // end for loop
-    			for( int j=0; j<SLOTS; j++ ){ // last bucket
-    				out.print("");
-    				out.print(temp.key[j]);
-    				out.print(":");
-    				out.print(temp.value[j]);
-    				out.print("\t");
-    				if(SLOTS!=j+1){
-    					out.print(" \n");
-    				} // end if
-    			} // end for loop
-              } 	// end if chain
-              else{	
-            	  for( int j=0; j<SLOTS; j++ ){ // only bucket
-            		  out.print("");
+    		out.println("Bucket:"+ i+"\n");
+    		//if(chain)
+    		 // printing chain of buckets
+    			//out.print("\nChain Exists:\n");
+    			for( int j=0; j<SLOTS; j++ )
+    			{
+    				out.print(temp.key[j]+":"+temp.value[j]+ "\t");
+
+    			}// end for loop
+    			out.println("\n");
+               	// end if chain
+    	}
+            /*  
+    		else
+              {	
+            	  out.print("\nThere are No chains: \n");
+            	  for( int j=0; j<SLOTS; j++ )
+            	  { // only bucket
+            		  out.print(temp.key[j]+":"+temp.value[j]+"\t\t");
             		  out.print(temp.key[j]);
             		  out.print(":");
             		  out.print(temp.value[j]);
             		  out.print("\t");
-            		  if(SLOTS!=j+1){
+            		  if(SLOTS!=j+1)
+            		  {
             			  if(temp.value[j]==null)
             				  out.print("");
             			  else
             				  out.print("\t"); 
             		  } // end if
             	  }	 // end for loop
-            	  out.print(" \n");
+            	  out.print(" \n\n");
               } // end else	
        } // end first for loop
+       */
     	out.println ("-------------------------------------------");
-    } // print
+    
+   } // print
 
     /********************************************************************************
      * Hash the key using the low resolution hash function.
