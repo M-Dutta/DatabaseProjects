@@ -337,21 +337,8 @@ public class Table
     } // join
 
     
-    /************************************************************************************
-     * Join this table and table2 by performing an "equi-join".  Same as above, but implemented
-     * using an Index Join algorithm.
-     *
-     * @param attribute1  the attributes of this table to be compared (Foreign Key)
-     * @param attribute2  the attributes of table2 to be compared (Primary Key)
-     * @param table2      the rhs table in the join operation
-     * @return  a table with tuples satisfying the equality predicate
-     */
-    public Table i_join (String attributes1, String attributes2, Table table2)
-    {
-        return null;
-    } // i_join
-
-    /************************************************************************************
+   /************************************************************************************
+     * IMPLEMENTED (DONE)
      * Join this table and table2 by performing an "equi-join".  Same as above, but implemented
      * using a Hash Join algorithm.
      *
@@ -362,8 +349,65 @@ public class Table
      */
     public Table h_join (String attributes1, String attributes2, Table table2)
     {
-        return null;
-    } // h_join
+         out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
+                                               + table2.name + ")");
+
+         String [] t_attrs = attributes1.split (" ");
+         String [] u_attrs = attributes2.split (" ");
+   
+         List <Comparable []> rows = new ArrayList <> ();
+         String t1_k="";
+         String t2_k="";
+         Hashtable <String, Comparable [] > ht1 = new Hashtable<String, Comparable [] >();
+
+         //************************************* Setting up Attribute List*********************** 
+         //Eliminating Duplicates
+           List <String> attrs  = new ArrayList<>(Arrays.asList(this.attribute));
+           ArrayList <String> dupAttrs = new ArrayList<>();
+           
+           //Add "2" to duplicate values. Extract non Duplicate Values in attrs
+          for (int i =0; i < table2.attribute.length; i++) {
+       	   if (attrs.contains(table2.attribute[i]))
+       		   dupAttrs.add(table2.attribute[i]+"2");  //Add "2" to duplicate values.
+       	   else          //Extract non Duplicate Values in attrs
+       		   attrs.add(table2.attribute[i]);
+          }
+
+          String[] attrsa = attrs.toArray(new String[attrs.size()]); // converting to array
+          String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
+           
+          //************************************************
+          
+          //Setting up Keys and creating a hashTable
+          Set<String> t1keys = ht1.keySet();
+          for (int i = 0; i < this.tuples.size(); i++) {
+        	  for (int j = 0; j <t_attrs.length ; j++) {
+        		  t1_k += this.tuples.get(i)[this.col(t_attrs[j])];
+        		  for(String keys: t1keys)	{
+            		  if (keys.equals(t1_k))
+            			  t1_k+="2";
+        		  }
+        	  }
+         ht1.put(t1_k, tuples.get(i));
+         t1_k ="";							//Empty out t1_k
+         }      
+         for (int i = 0; i < table2.tuples.size(); i++) {
+       	  for (int j = 0; j <u_attrs.length ; j++) {
+       		  t2_k += table2.tuples.get(i)[table2.col(u_attrs[j])];
+       	  }
+        	 //Check for equality through hashTable
+        	 for(String keys: t1keys)	{
+        		 	
+        		 if (keys.equals(t2_k) || keys.equals(t2_k+"2"))
+        		rows.add(ArrayUtil.concat(ht1.get(keys),table2.tuples.get(i)));
+        	 }
+        	 t2_k ="";
+         }  	     
+         
+       return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
+               ArrayUtil.concat (domain, table2.domain), key, rows);
+        //return null;
+    } // h_join IMPLEMENTED(DONE)
 
     /************************************************************************************
      *IMPLEMENTED (DONE)
