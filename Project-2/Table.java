@@ -401,7 +401,6 @@ public class Table
          
           
           Set<String> tkeys = ht.keySet(); 
-          long startTime = System.nanoTime();   //******************GET TIME**********************//
           for (int i = 0; i < smaller.tuples.size(); i++) {
         	  for (int j = 0; j <t_attrs.length ; j++) {
         		  t1_k += smaller.tuples.get(i)[smaller.col(u_attrs[j])];
@@ -422,13 +421,10 @@ public class Table
         	 for(String keys: tkeys)	{
         		 	
         		 if (keys.equals(t2_k) || keys.equals(t2_k+"2"))
-        		rows.add(ArrayUtil.concat(ht.get(keys),bigger.tuples.get(i)));
+        		rows.add(ArrayUtil.concat(bigger.tuples.get(i),ht.get(keys))  );
         	 }
         	 t2_k ="";
          }  	     
-         long endTime = System.currentTimeMillis(); 
-         long duration = (endTime - startTime);
-         System.out.println("\nTime Duration:" + duration +"\n");
        return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                ArrayUtil.concat (domain, table2.domain), key, rows);
         //return null;
@@ -772,9 +768,11 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     
     public long h_joinTime(String attributes1, String attributes2, Table table2) {
 		long start = System.currentTimeMillis();
+		
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
-	    long duration = end - start;
+	    long duration = end -start;
+	    System.out.println(end+ " - " + start);
 	    return duration;
 	}	
     
