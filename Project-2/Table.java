@@ -153,8 +153,9 @@ public class Table
     // Public Methods
     //----------------------------------------------------------------------------------
 
-    
-    /************************************************************************************ 
+
+
+	/************************************************************************************ 
         IMPLEMENT THIS (DONE)
     /************************************************************************************
      * Project the tuples onto a lower dimension by keeping only the given attributes.
@@ -463,8 +464,10 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
         {
         	//Only adding tuples that match
         	 for (KeyType key : table2.index.keySet()) {
+        		 if (table2.index.get(key)!=null && index.get(key)!= null ) {
         		 if (table2.index.get(key).equals(index.get(key))) 
         			 rows.add(extract(index.get(key), attrsa));
+        		 }
         	 }	
         }
       //Checking tuple sizes to avoid null pointer error
@@ -772,7 +775,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end -start;
-	    System.out.println(end+ " - " + start);
+	    System.out.println ("h_join Runtime: ");
 	    return duration;
 	}	
     
@@ -794,6 +797,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end - start;
+	    System.out.println ("Join Runtime: ");
 	    return duration;
 	}	
     
@@ -811,6 +815,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		project(attributes);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end - start;
+	    System.out.println ("Project Runtime: ");
 	    return duration;
 	}	
     
@@ -828,6 +833,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     	select(predicate);
     	 long end = System.currentTimeMillis(); 
  	    long duration = end - start;
+ 	   System.out.println ("Range Select Runtime: ");
  	    return duration;
     }
     
@@ -846,6 +852,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     	select(keyVal);
     	 long end = System.currentTimeMillis(); 
  	    long duration = end - start;
+ 	   System.out.println ("Point Select Runtime: ");
  	    return duration;
     }
    
