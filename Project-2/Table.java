@@ -176,6 +176,7 @@ public class Table
       for (int i = 0; i < tuples.size(); i++)     
         {//  looking through tuples 
             rows.add(extract (tuples.get(i), attrs)); // extract Method [look below]
+ 
         }; 
          
         return new Table (name + count++, attrs, colDomain, newKey, rows);
@@ -302,7 +303,6 @@ public class Table
 
         String [] t_attrs = attributes1.split (" ");
         String [] u_attrs = attributes2.split (" ");
-        
 
         List <Comparable []> rows = new ArrayList <> ();
  
@@ -313,8 +313,8 @@ public class Table
     				if(!t1Attr[this.col(t_attrs[i])].equals(t2Attr[table2.col(u_attrs[i])]))
     					return false;
     			};
-    			return true;
-    			//for each matched Attribute value, concat the tuples
+    			return true; //for each matched Attribute value, concat the tuples
+    			
     		}).forEach(t2Attr -> rows.add(ArrayUtil.concat(t1Attr,t2Attr))));
         
         List <String> attrs  = new ArrayList<>(Arrays.asList(this.attribute));
@@ -330,7 +330,6 @@ public class Table
 
        String[] attrsa = attrs.toArray(new String[attrs.size()]); // converting to array
        String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
-       
        
         return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
@@ -349,16 +348,28 @@ public class Table
      */
     public Table h_join (String attributes1, String attributes2, Table table2)
     {
-         out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
+    	String [] u_attrs;
+    	String [] t_attrs;
+    	 Table smaller;
+         Table bigger;
+         if (this.tuples.size() > table2.tuples.size()) {
+        	 smaller = table2; bigger = this;
+        	 t_attrs = attributes1.split (" ");
+             u_attrs = attributes2.split (" ");	 
+         }
+         else {smaller = this; bigger = table2;
+          u_attrs = attributes1.split (" ");
+          t_attrs = attributes2.split (" ");
+         }
+    	
+    	
+    	out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
                                                + table2.name + ")");
-
-         String [] t_attrs = attributes1.split (" ");
-         String [] u_attrs = attributes2.split (" ");
-   
+    	
          List <Comparable []> rows = new ArrayList <> ();
          String t1_k="";
          String t2_k="";
-         Hashtable <String, Comparable [] > ht1 = new Hashtable<String, Comparable [] >();
+         Hashtable <String, Comparable [] > ht = new Hashtable<String, Comparable [] >();
 
          //************************************* Setting up Attribute List*********************** 
          //Eliminating Duplicates
@@ -379,27 +390,30 @@ public class Table
           //************************************************
           
           //Setting up Keys and creating a hashTable
-          Set<String> t1keys = ht1.keySet();
-          for (int i = 0; i < this.tuples.size(); i++) {
+         
+          
+          Set<String> tkeys = ht.keySet();
+          for (int i = 0; i < smaller.tuples.size(); i++) {
         	  for (int j = 0; j <t_attrs.length ; j++) {
-        		  t1_k += this.tuples.get(i)[this.col(t_attrs[j])];
-        		  for(String keys: t1keys)	{
+        		  t1_k += smaller.tuples.get(i)[smaller.col(u_attrs[j])];
+        		  for(String keys: tkeys)	{
             		  if (keys.equals(t1_k))
             			  t1_k+="2";
         		  }
         	  }
-         ht1.put(t1_k, tuples.get(i));
+         ht.put(t1_k, smaller.tuples.get(i));
          t1_k ="";							//Empty out t1_k
          }      
-         for (int i = 0; i < table2.tuples.size(); i++) {
-       	  for (int j = 0; j <u_attrs.length ; j++) {
-       		  t2_k += table2.tuples.get(i)[table2.col(u_attrs[j])];
+          
+         for (int i = 0; i < bigger.tuples.size(); i++) {
+       	  for (int j = 0; j <t_attrs.length ; j++) {
+       		  t2_k += bigger.tuples.get(i)[bigger.col(t_attrs[j])];
        	  }
         	 //Check for equality through hashTable
-        	 for(String keys: t1keys)	{
+        	 for(String keys: tkeys)	{
         		 	
         		 if (keys.equals(t2_k) || keys.equals(t2_k+"2"))
-        		rows.add(ArrayUtil.concat(ht1.get(keys),table2.tuples.get(i)));
+        		rows.add(ArrayUtil.concat(ht.get(keys),bigger.tuples.get(i)));
         	 }
         	 t2_k ="";
          }  	     
@@ -424,7 +438,7 @@ public class Table
     public Table join (Table table2)
     {
 out.println ("RA> " + name + ".join (" + table2.name + ")");
-        
+
         List <Comparable []> rows = new ArrayList <> ();
         /*
          * Making a list of all the non duplicate Attributes
@@ -680,6 +694,19 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     } // typeCheck
     
     /************************************************************************************
+     *IMPLEMENTED
+     * 
+     * return the number of tuples of the table 
+
+     * @return  return the number of tuples of the table 
+     * 
+     */
+    @SuppressWarnings("unused")
+	private int returnSize () {
+    	return this.tuples.size();
+    }
+    
+    /************************************************************************************
      * Find the classes in the "java.lang" package with given names.
      *
      * @param className  the array of class name (e.g., {"Integer", "String"})
@@ -717,5 +744,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 
         return obj;
     } // extractDom
+    
+    
 
 } // Table class
