@@ -25,6 +25,7 @@ import static java.lang.System.out;
  * select, union, minus and join.  The insert data manipulation operator is also provided.
  * Missing are update and delete data manipulation operators.
  */
+@SuppressWarnings("rawtypes")
 public class Table
        implements Serializable
 {
@@ -53,11 +54,12 @@ public class Table
      *  real types: Double, Float
      *  string types: Character, String
      */
-    private final Class [] domain;
+   
+	private final Class [] domain;
 
     /** Collection of tuples (data storage).
      */
-    private final List <Comparable []> tuples;
+	private final List <Comparable []> tuples;
 
     /** Primary key. 
      */
@@ -266,7 +268,7 @@ public class Table
      */
     public Table minus (Table table2)
     {
-       List <Comparable []> rows = new ArrayList <> ();
+	List <Comparable []> rows = new ArrayList <> ();
         out.println ("RA> " + name + ".minus (" + table2.name + ")");
         if (!compatible (table2) || !typeCheck(table2.tuples.get(0)) ) {
               System.out.println("\nThe following table is invalid and will remain empty\n");
@@ -296,7 +298,8 @@ public class Table
      * @param table2      the rhs table in the join operation
      * @return  a table with tuples satisfying the equality predicate
      */
-    public Table join (String attributes1, String attributes2, Table table2)
+ 
+	public Table join (String attributes1, String attributes2, Table table2)
     {
          out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
                                                + table2.name + ")");
@@ -306,6 +309,7 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
  
+        long startTime = System.nanoTime();
         //For each tuple in table1, compare it to each tuple in table2
         this.tuples.stream().forEach(t1Attr -> table2.tuples.stream().filter(t2Attr -> {
     			for(int i = 0; i < t_attrs.length; i++){
@@ -319,6 +323,8 @@ public class Table
         
         List <String> attrs  = new ArrayList<>(Arrays.asList(this.attribute));
         ArrayList <String> dupAttrs = new ArrayList<>();
+        long endTime = System.nanoTime();
+        long duration = endTime- startTime;
         
         //Add "2" to duplicate values. Extract non Duplicate Values in attrs
        for (int i =0; i < table2.attribute.length; i++) {
@@ -331,6 +337,7 @@ public class Table
        String[] attrsa = attrs.toArray(new String[attrs.size()]); // converting to array
        String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
        
+       System.out.println("\nTime Duration:" + duration +"\n");
         return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
@@ -346,7 +353,8 @@ public class Table
      * @param table2      the rhs table in the join operation
      * @return  a table with tuples satisfying the equality predicate
      */
-    public Table h_join (String attributes1, String attributes2, Table table2)
+
+	public Table h_join (String attributes1, String attributes2, Table table2)
     {
     	String [] u_attrs;
     	String [] t_attrs;
@@ -392,7 +400,8 @@ public class Table
           //Setting up Keys and creating a hashTable
          
           
-          Set<String> tkeys = ht.keySet();
+          Set<String> tkeys = ht.keySet(); 
+          long startTime = System.nanoTime();   //******************GET TIME**********************//
           for (int i = 0; i < smaller.tuples.size(); i++) {
         	  for (int j = 0; j <t_attrs.length ; j++) {
         		  t1_k += smaller.tuples.get(i)[smaller.col(u_attrs[j])];
@@ -417,7 +426,9 @@ public class Table
         	 }
         	 t2_k ="";
          }  	     
-         
+         long endTime = System.currentTimeMillis(); 
+         long duration = (endTime - startTime);
+         System.out.println("\nTime Duration:" + duration +"\n");
        return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                ArrayUtil.concat (domain, table2.domain), key, rows);
         //return null;
@@ -499,7 +510,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
      */
     public boolean insert (Comparable [] tup)
     {
-        out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
+        //out.println ("DML> insert into " + name + " values ( " + Arrays.toString (tup) + " )");
 
         if (typeCheck (tup)) {
             tuples.add (tup);
@@ -745,6 +756,100 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
         return obj;
     } // extractDom
     
+    /************************************************************************************
+     *IMPLEMENTED (DONE)
+     *
+     *Returns runtime for the h_join method
+     *
+     * #usage movie.h_joinTime ("studioNo", "name", studio)
+     *
+     * @param attribute1  the attributes of this table to be compared (Foreign Key)
+     * @param attribute2  the attributes of table2 to be compared (Primary Key)
+     * @param table2      the rhs table in the join operation
+     * @return Runtime for h_join
+     */
+ 
     
+    public long h_joinTime(String attributes1, String attributes2, Table table2) {
+		long start = System.currentTimeMillis();
+		h_join(attributes1, attributes2, table2);
+	    long end = System.currentTimeMillis(); 
+	    long duration = end - start;
+	    return duration;
+	}	
+    
+    /************************************************************************************
+     *IMPLEMENTED (DONE)
+     *
+     *Returns runtime for the join method
+     *
+     * #usage movie.joinTime ("studioNo", "name", studio)
+     *
+     * @param attribute1  the attributes of this table to be compared (Foreign Key)
+     * @param attribute2  the attributes of table2 to be compared (Primary Key)
+     * @param table2      the rhs table in the join operation
+     * @return  Runtime for join
+     */
+    
+    public long joinTime(String attributes1, String attributes2, Table table2) {
+		long start = System.currentTimeMillis();
+		h_join(attributes1, attributes2, table2);
+	    long end = System.currentTimeMillis(); 
+	    long duration = end - start;
+	    return duration;
+	}	
+    
+    /************************************************************************************
+     * Project the tuples onto a lower dimension by keeping only the given attributes.
+     * Check whether the original key is included in the projection.
+     *
+     * #usage movie.projectTime ("title year studioNo")
+     *
+     * @param attributes  the attributes to project onto
+     * @return  Runtime for project
+     */
+    public long projectTime(String attributes) {
+		long start = System.currentTimeMillis();
+		project(attributes);
+	    long end = System.currentTimeMillis(); 
+	    long duration = end - start;
+	    return duration;
+	}	
+    
+    /************************************************************************************
+     * Select the tuples satisfying the given predicate (Boolean function).
+     *
+     * #usage movie.selectTime (t -> t[movie.col("year")].equals (1977))
+     *
+     * @param predicate  the check condition for tuples
+     * @return  Runtime for select
+     */
+    
+    public long selectTime(Predicate <Comparable []> predicate) {
+    	long start = System.currentTimeMillis();
+    	select(predicate);
+    	 long end = System.currentTimeMillis(); 
+ 	    long duration = end - start;
+ 	    return duration;
+    }
+    
+    /************************************************************************************
+    *IMPLEMENTED (DONE)
+    *
+    * Select the tuples satisfying the given key predicate (key = value).  Use an index
+    * (Map) to retrieve the tuple with the given key value.
+    *
+    * @param keyVal  the given key value
+    * @return  Runtime for select
+    */
+
+    public long selectTime(KeyType keyVal) {
+    	long start = System.currentTimeMillis();
+    	select(keyVal);
+    	 long end = System.currentTimeMillis(); 
+ 	    long duration = end - start;
+ 	    return duration;
+    }
+   
 
 } // Table class
