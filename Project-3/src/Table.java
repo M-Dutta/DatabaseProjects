@@ -342,6 +342,71 @@ public class Table
         return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
+	
+	
+	 /************************************************************************************
+     * Join this table and table2 by performing an "equi-join".  Same as above, but implemented
+     * using an Index Join algorithm.
+     *
+     * @param attribute1  the attributes of this table to be compared (Foreign Key)
+     * @param attribute2  the attributes of table2 to be compared (Primary Key)
+     * @param table2      the rhs table in the join operation
+     * @return  a table with tuples satisfying the equality predicate
+     */
+	
+	
+	
+	 public Table i_join (String attributes1, String attributes2, Table table2)
+	 	{
+
+		 
+		 String [] t_attrs = attributes1.split (" ");
+	     String [] u_attrs = attributes2.split (" ");
+	     ArrayList <Integer> T1_attLoc = new ArrayList<Integer>();
+	     ArrayList <Integer> T2_attLoc = new ArrayList<Integer>();
+	     List <Comparable []> rows = new ArrayList <> ();
+	     
+	     
+	     //************************************* Setting up Attribute List*********************** 
+         //Eliminating Duplicates
+           List <String> attrs  = new ArrayList<>(Arrays.asList(this.attribute));
+           ArrayList <String> dupAttrs = new ArrayList<>();
+           
+           //Add "2" to duplicate values. Extract non Duplicate Values in attrs
+          for (int i =0; i < table2.attribute.length; i++) {
+       	   if (attrs.contains(table2.attribute[i]))
+       		   dupAttrs.add(table2.attribute[i]+"2");  //Add "2" to duplicate values.
+       	   else          //Extract non Duplicate Values in attrs
+       		   attrs.add(table2.attribute[i]);
+          }
+
+          String[] attrsa = attrs.toArray(new String[attrs.size()]); // converting to array
+          String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
+           
+          //************************************************
+	     //Insert Attribute location
+	     for (int i =0; i < t_attrs.length; i++) {
+	    	 T1_attLoc.add(this.col(t_attrs[i]));
+	    	 T2_attLoc.add(table2.col(u_attrs[i]));
+	     }
+
+	     //Compare Attributes from the Tuples by getting the Tuples through the INDEX
+	     for (Map.Entry <KeyType, Comparable []> x: index.entrySet ()) {
+	    	 for (Map.Entry <KeyType, Comparable []> z : table2.index.entrySet ()) { 
+	    		 
+	    			boolean b = false; 
+	    		 for (int counter = 0; counter < T2_attLoc.size(); counter++) { 
+	    			 //Compare indexed Tuple-attributes
+	    		 if (x.getValue()[T1_attLoc.get(counter)].equals(z.getValue()[T2_attLoc.get(counter)])) b = true; //Compare each attribute for each tuple for both tables
+	    		 else b = false;
+	    		 }
+	    		 if (b ==true) rows.add(ArrayUtil.concat(x.getValue(),z.getValue())); //add condition satifying tuples and concat them
+	    	 }
+	     }	 
+	     
+	     return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
+	               ArrayUtil.concat (domain, table2.domain), key, rows);
+	    } // i_join
 
     
    /************************************************************************************
@@ -361,6 +426,7 @@ public class Table
     	String [] t_attrs;
     	 Table smaller;
          Table bigger;
+         //Making a check for Tuple sizes so that the smaller is converted into the hast table
          if (this.tuples.size() > table2.tuples.size()) {
         	 smaller = table2; bigger = this;
         	 t_attrs = attributes1.split (" ");
@@ -375,6 +441,7 @@ public class Table
     	out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
                                                + table2.name + ")");
     	
+
          List <Comparable []> rows = new ArrayList <> ();
          String t1_k="";
          String t2_k="";
@@ -398,19 +465,17 @@ public class Table
            
           //************************************************
           
-          //Setting up Keys and creating a hashTable
-         
-          
+          //Setting up Keys and creating a hashTable         
           Set<String> tkeys = ht.keySet(); 
           for (int i = 0; i < smaller.tuples.size(); i++) {
         	  for (int j = 0; j <t_attrs.length ; j++) {
         		  t1_k += smaller.tuples.get(i)[smaller.col(u_attrs[j])];
-        		  for(String keys: tkeys)	{
+        		  for(String keys: tkeys)	{ // Check for similar keys and re-asses the key
             		  if (keys.equals(t1_k))
             			  t1_k+="2";
         		  }
         	  }
-         ht.put(t1_k, smaller.tuples.get(i));
+         ht.put(t1_k, smaller.tuples.get(i));  //Putting key and Value into HashTable
          t1_k ="";							//Empty out t1_k
          }      
           
@@ -561,7 +626,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     /************************************************************************************
      * Print this table's index (Map).
      */
-    public void printIndex ()
+    public void printIndex()
     {
         out.println ("\n Index for " + name);
         out.println ("-------------------");
@@ -776,6 +841,30 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 	    long end = System.currentTimeMillis(); 
 	    long duration = end -start;
 	    System.out.println ("h_join Runtime: ");
+	    return duration;
+	}	
+    
+    
+    /************************************************************************************
+     *IMPLEMENTED (DONE)
+     *
+     *Returns runtime for the h_join method
+     *
+     * #usage movie.i_joinTime ("studioNo", "name", studio)
+     *
+     * @param attribute1  the attributes of this table to be compared (Foreign Key)
+     * @param attribute2  the attributes of table2 to be compared (Primary Key)
+     * @param table2      the rhs table in the join operation
+     * @return Runtime for i_join
+     */
+    
+    public long i_joinTime(String attributes1, String attributes2, Table table2) {
+		long start = System.currentTimeMillis();
+		
+		h_join(attributes1, attributes2, table2);
+	    long end = System.currentTimeMillis(); 
+	    long duration = end -start;
+	    System.out.println ("i_join Runtime: ");
 	    return duration;
 	}	
     
