@@ -154,20 +154,57 @@ public class TestTupleGenerator
         
         /**
          * TESTING RUNTIME
+         * INDIVIDUALLY (To Counteract CPU boost-time)
          * 
          */
+        
+        int i =1; // USE THIS TO SELECT WHAT YO TUN
+        if (i==0)
+        	
+        //h_join
         System.out.println(Student.h_joinTime ("id", "studId", Transcript));
         
+        //i_join
+        if (i==1)
+        System.out.println(Student.i_joinTime ("id", "studId", Transcript));
+        
+        //nested loop join
+        if (i==2)
         System.out.println(Student.joinTime ("id", "studId", Transcript));
         
+        //
+        if (i==3)
+        System.out.println (Student.selectTime ( t -> t[Student.col("id")].equals ("809530") &&
+                t[Student.col("status")].equals ("status290070")) );
+        
+        if (i==4)
+        System.out.println(Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        
+       
+        /**
+         * TESTING RUNTIME
+         * All together, NOT IDEAL. CPU boost interferes
+         * 
+         *
+        
+        System.out.println(Student.h_joinTime ("id", "studId", Transcript));
+        
+     
+        System.out.println(Student.i_joinTime ("id", "studId", Transcript));
+        
+      
+        System.out.println(Student.joinTime ("id", "studId", Transcript));
+        
+      
         System.out.println (Student.selectTime ( t -> t[Student.col("id")].equals ("809530") &&
                 t[Student.col("status")].equals ("status290070")) );
         
         
         System.out.println(Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
         
-       
-   
+        
+        
+   */
    
         
         
