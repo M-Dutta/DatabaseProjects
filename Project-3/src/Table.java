@@ -19,6 +19,7 @@ import java.util.stream.*;
 import static java.lang.Boolean.*;
 import static java.lang.System.out;
 
+
 /****************************************************************************************
  * This class implements relational database tables (including attribute names, domains
  * and a list of tuples.  Five basic relational algebra operators are provided: project,
@@ -75,8 +76,8 @@ public class Table
 
     /** The map type to be used for indices.  Change as needed.
      */
-    private static final MapType mType = MapType.LINHASH_MAP;
-
+    private static final MapType mType = MapType.TREE_MAP;
+    
     
     /************************************************************************************
      * Make a map (index) given the MapType.
@@ -310,7 +311,7 @@ public class Table
 
         List <Comparable []> rows = new ArrayList <> ();
  
-        long startTime = System.nanoTime();
+
         //For each tuple in table1, compare it to each tuple in table2
         this.tuples.stream().forEach(t1Attr -> table2.tuples.stream().filter(t2Attr -> {
     			for(int i = 0; i < t_attrs.length; i++){
@@ -324,8 +325,8 @@ public class Table
         
         List <String> attrs  = new ArrayList<>(Arrays.asList(this.attribute));
         ArrayList <String> dupAttrs = new ArrayList<>();
-        long endTime = System.nanoTime();
-        long duration = endTime- startTime;
+     
+    
         
         //Add "2" to duplicate values. Extract non Duplicate Values in attrs
        for (int i =0; i < table2.attribute.length; i++) {
@@ -337,8 +338,7 @@ public class Table
 
        String[] attrsa = attrs.toArray(new String[attrs.size()]); // converting to array
        String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
-       
-       System.out.println("\nTime Duration:" + duration +"\n");
+
         return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                                           ArrayUtil.concat (domain, table2.domain), key, rows);
     } // join
@@ -385,6 +385,7 @@ public class Table
            
           //************************************************
 	     //Insert Attribute location
+ 
 	     for (int i =0; i < t_attrs.length; i++) {
 	    	 T1_attLoc.add(this.col(t_attrs[i]));
 	    	 T2_attLoc.add(table2.col(u_attrs[i]));
@@ -403,7 +404,7 @@ public class Table
 	    		 if (b ==true) rows.add(ArrayUtil.concat(x.getValue(),z.getValue())); //add condition satifying tuples and concat them
 	    	 }
 	     }	 
-	     
+	
 	     return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
 	               ArrayUtil.concat (domain, table2.domain), key, rows);
 	    } // i_join
@@ -440,12 +441,6 @@ public class Table
     	
     	out.println ("RA> " + name + ".join (" + attributes1 + ", " + attributes2 + ", "
                                                + table2.name + ")");
-    	
-
-         List <Comparable []> rows = new ArrayList <> ();
-         String t1_k="";
-         String t2_k="";
-         Hashtable <String, Comparable [] > ht = new Hashtable<String, Comparable [] >();
 
          //************************************* Setting up Attribute List*********************** 
          //Eliminating Duplicates
@@ -464,6 +459,12 @@ public class Table
           String[] dupAttrsa = dupAttrs.toArray(new String[dupAttrs.size()]); //converting to array
            
           //************************************************
+        
+          List <Comparable []> rows = new ArrayList <> ();
+          String t1_k="";
+          String t2_k="";
+          Hashtable <String, Comparable [] > ht = new Hashtable<String, Comparable [] >();
+          
           
           //Setting up Keys and creating a hashTable         
           Set<String> tkeys = ht.keySet(); 
@@ -491,6 +492,8 @@ public class Table
         	 }
         	 t2_k ="";
          }  	     
+
+
        return new Table (name + count++, ArrayUtil.concat (attrsa, dupAttrsa),
                ArrayUtil.concat (domain, table2.domain), key, rows);
         //return null;
@@ -840,7 +843,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end -start;
-	    System.out.println ("h_join Runtime: ");
+	    System.out.println ("h_join Runtime in Milli-Seconds: ");
 	    return duration;
 	}	
     
@@ -864,7 +867,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end -start;
-	    System.out.println ("i_join Runtime: ");
+	    System.out.println ("i_join Runtime in Milli-Seconds: ");
 	    return duration;
 	}	
     
@@ -881,12 +884,32 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
      * @return  Runtime for join
      */
     
+    /************************************************************************************
+     *IMPLEMENTED (DONE)
+     *
+     * Returns runtime for the join method
+     * 
+     * #usage movieStar.join (starsIn)
+     *
+     * @param table2  the rhs table in the join operation
+     * @return  Runtime for join
+     */
+
+    public long joinTime(Table table) {
+		long start = System.currentTimeMillis();
+		this.join(table);
+	    long end = System.currentTimeMillis(); 
+	    long duration = end - start;
+	    System.out.println ("Join Runtime in Milli-Seconds: ");
+	    return duration;
+	}	
+    
     public long joinTime(String attributes1, String attributes2, Table table2) {
 		long start = System.currentTimeMillis();
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end - start;
-	    System.out.println ("Join Runtime: ");
+	    System.out.println ("Join Runtime in Milli-Seconds: ");
 	    return duration;
 	}	
     
@@ -904,7 +927,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 		project(attributes);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end - start;
-	    System.out.println ("Project Runtime: ");
+	    System.out.println ("Project Runtime in Milli-Seconds: ");
 	    return duration;
 	}	
     
@@ -922,7 +945,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     	select(predicate);
     	 long end = System.currentTimeMillis(); 
  	    long duration = end - start;
- 	   System.out.println ("Range Select Runtime: ");
+ 	   System.out.println ("Range Select Runtime in Milli-Seconds: ");
  	    return duration;
     }
     
@@ -941,7 +964,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     	select(keyVal);
     	 long end = System.currentTimeMillis(); 
  	    long duration = end - start;
- 	   System.out.println ("Point Select Runtime: ");
+ 	   System.out.println ("Point Select Runtime in Milli-Seconds: ");
  	    return duration;
     }
    
