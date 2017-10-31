@@ -429,16 +429,28 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
         }
         else {                                                             // handle internal node level
-
-            int i = n.find (key);                                            // find "<=" position
-            rt = insert (key, ref, (Node) n.ref[i]);                         // recursive call to insert
-           // if (DEBUG) out.println ("insert: handle internal node level");
-            
-            
-            
-            
-
-                //  T O   B E   I M P L E M E N T E D
+        	
+        	int i = n.find (key); // find "<=" position
+        	rt = insert (key, ref, (Node) n.ref[i]); // recursive call to insert
+        	if(hasSplit)
+        	{
+        	K sep = ((Node)n.ref[i]).key[((Node)n.ref[i]).nKeys - 1];
+        		if(ORDER - 1> n.nKeys )
+        		{
+        			wedge(sep, rt, n, i, false); //insert in node that's not full
+        			hasSplit = false; 
+        		}
+        	else
+        	{
+        	rt = split(sep, rt, n, false); //split non-leaf node
+        	if ( rt != null && n == root) { //if current node root, make new root
+        	root = makeRoot (n, n.key[n.nKeys-1], rt); 
+        	hasSplit = false;
+        		}
+        		n.nKeys--;
+        		}
+        	}
+                //  T O   B E   I M P L E M E N T E D (DONE)
 
         } // if
 
