@@ -76,7 +76,7 @@ public class Table
 
     /** The map type to be used for indices.  Change as needed.
      */
-    private static final MapType mType = MapType.NO_MAP;
+    private static final MapType mType = MapType.BPTREE_MAP;
     
     
     /************************************************************************************
@@ -202,6 +202,37 @@ public class Table
                    tuples.stream ().filter (t -> predicate.test (t))
                                    .collect (Collectors.toList ()));
     } // select
+    
+    
+    /************************************************************************************
+     * Select the tuples satisfying the given predicate (Boolean function).
+     *
+     * #usage movie.select (t -> t[movie.col("year")].equals (1977))
+     * uses INDEX
+     *
+     * @param predicate  the check condition for tuples
+     * @return  a table with tuples satisfying the predicate
+     */
+    
+    
+    public Table i_select (Predicate <Comparable []> predicate)
+    {
+        out.println ("RA> " + name + ".select (" + predicate + ")");
+        List <Comparable []> rows = new ArrayList <> ();
+        
+        for (KeyType value : index.keySet()) {
+        	Comparable [] t = index.get(value);
+        	if (predicate.test (t)) {
+        		rows.add(t);
+        	}
+        }
+        
+        return new Table (name + count++, attribute, domain, key,
+        		rows);
+    } // select
+    
+    
+    
 
     /************************************************************************************
      *IMPLEMENTED (DONE)
@@ -913,24 +944,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
 	    return duration;
 	}	
     
-    /************************************************************************************
-     * Project the tuples onto a lower dimension by keeping only the given attributes.
-     * Check whether the original key is included in the projection.
-     *
-     * #usage movie.projectTime ("title year studioNo")
-     *
-     * @param attributes  the attributes to project onto
-     * @return  Runtime for project
-     */
-    public long projectTime(String attributes) {
-		long start = System.currentTimeMillis();
-		project(attributes);
-	    long end = System.currentTimeMillis(); 
-	    long duration = end - start;
-	    System.out.println ("Project Runtime in Milli-Seconds: ");
-	    return duration;
-	}	
-    
+
     /************************************************************************************
      * Select the tuples satisfying the given predicate (Boolean function).
      *
@@ -948,25 +962,6 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
  	   System.out.println ("Select Runtime in Milli-Seconds: ");
  	    return duration;
     }
-    
-    /************************************************************************************
-    *IMPLEMENTED (DONE)
-    *
-    * Select the tuples satisfying the given key predicate (key = value).  Use an index
-    * (Map) to retrieve the tuple with the given key value.
-    *
-    * @param keyVal  the given key value
-    * @return  Runtime for select
-    */
-
-    public long selectTime(KeyType keyVal) {
-    	long start = System.currentTimeMillis();
-    	select(keyVal);
-    	 long end = System.currentTimeMillis(); 
- 	    long duration = end - start;
- 	   System.out.println ("Point Select Runtime in Milli-Seconds: ");
- 	    return duration;
-    }
-   
+      
 
 } // Table class
