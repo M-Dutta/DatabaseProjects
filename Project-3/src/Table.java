@@ -962,6 +962,25 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
  	   System.out.println ("Select Runtime in Milli-Seconds: ");
  	    return duration;
     }
-      
+          
+    /************************************************************************************
+     * Select the tuples satisfying the given predicate (Boolean function).
+     *
+     * #usage movie.selectTime (t -> t[movie.col("year")].equals (1977)) for INDEXED select
+     *
+     * @param predicate  the check condition for tuples
+     * @return  Runtime for i_select
+     */
+    
+    public long i_selectTime(Predicate <Comparable []> predicate) {
+    	long start = System.currentTimeMillis();
+    	i_select(predicate);
+    	long end = System.currentTimeMillis(); 
+ 	    long duration = end - start;
+ 	   System.out.println ("Indexed Select Runtime in Milli-Seconds: ");
+ 	    return duration;
+    }
+     
+
 
 } // Table class
