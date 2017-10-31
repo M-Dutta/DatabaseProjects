@@ -189,15 +189,17 @@ public class TestTupleGenerator
          */
         	System.out.println("nested loop join:\n"+Student.joinTime ("id", "studId", Transcript));
         	
-        	System.out.println("Index Join: \n"+Student.i_joinTime ("id", "studId", Transcript));
+        	System.out.println("Index Join:\n"+Student.i_joinTime ("id", "studId", Transcript));
         	
-        	System.out.println("Hash Join: \n" +Student.h_joinTime ("id", "studId", Transcript));
+        	System.out.println("Hash Join:\n" +Student.h_joinTime ("id", "studId", Transcript));
            
-        	System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("809530")) );
-          
-        	System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 500000)) ;
-        }
+        	//NOTE: May Return an Empty set if Value isn't found
+        	//Reason: Values are generated at random.
+        	System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("500000")) );
 
+        	System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        }
+    
         System.out.println ("-----------------END-------------------------");
      // main
     
