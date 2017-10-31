@@ -222,9 +222,11 @@ public class Table
         
         for (KeyType value : index.keySet()) {
         	Comparable [] t = index.get(value);
+        	if (t!= null) {
         	if (predicate.test (t)) {
         		rows.add(t);
         	}
+        }
         }
         
         return new Table (name + count++, attribute, domain, key,
