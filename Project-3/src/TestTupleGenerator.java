@@ -158,57 +158,46 @@ public class TestTupleGenerator
          * 
          */
         
-        int i =1; // USE THIS TO SELECT WHAT YO TUN
-        if (i==0)
+        int selector =1;
+        if (selector ==0) {
+        	//h_join
+        	 int i =0; // USE THIS TO SELECT WHAT YO TUN
         	
-        //h_join
-        System.out.println(Student.h_joinTime ("id", "studId", Transcript));
+        	if (i==0) 
+        		System.out.println("Hash Join: \n" +Student.h_joinTime ("id", "studId", Transcript));
         
-        //i_join
-        if (i==1)
-        System.out.println(Student.i_joinTime ("id", "studId", Transcript));
+        	//i_join
+        	if (i==1) 	
+        		System.out.println("Index Join: \n"+Student.i_joinTime ("id", "studId", Transcript));
         
-        //nested loop join
-        if (i==2)
-        System.out.println(Student.joinTime ("id", "studId", Transcript));
+        	//nested loop join
+        	if (i==2)
+        		System.out.println("nested loop join:\n"+Student.joinTime ("id", "studId", Transcript));
         
-        //
-        if (i==3)
-        System.out.println (Student.selectTime ( t -> t[Student.col("id")].equals ("809530") &&
-                t[Student.col("status")].equals ("status290070")) );
+        	//Point Select
+        	if (i==3)
+        		System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("809530")) );
         
-        if (i==4)
-        System.out.println(Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
-        
-       
+        	//Ranged Select
+        	if (i==4)
+        		System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        }
+        else {
         /**
          * TESTING RUNTIME
          * All together, NOT IDEAL. CPU boost interferes
-         * 
-         *
-        
-        System.out.println(Student.h_joinTime ("id", "studId", Transcript));
-        
-     
-        System.out.println(Student.i_joinTime ("id", "studId", Transcript));
-        
-      
-        System.out.println(Student.joinTime ("id", "studId", Transcript));
-        
-      
-        System.out.println (Student.selectTime ( t -> t[Student.col("id")].equals ("809530") &&
-                t[Student.col("status")].equals ("status290070")) );
-        
-        
-        System.out.println(Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
-        
-        
-        
-   */
-   
-        
-        
-        
+         */
+        	System.out.println("nested loop join:\n"+Student.joinTime ("id", "studId", Transcript));
+        	
+        	System.out.println("Index Join: \n"+Student.i_joinTime ("id", "studId", Transcript));
+        	
+        	System.out.println("Hash Join: \n" +Student.h_joinTime ("id", "studId", Transcript));
+           
+        	System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("809530")) );
+          
+        	System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 500000)) ;
+        }
+
         System.out.println ("-----------------END-------------------------");
      // main
     
