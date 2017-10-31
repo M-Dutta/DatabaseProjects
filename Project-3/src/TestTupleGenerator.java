@@ -176,17 +176,28 @@ public class TestTupleGenerator
         
         	//Point Select
         	if (i==3)
-        		System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("809530")) );
+        		System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("500000")) );
         
         	//Ranged Select
         	if (i==4)
         		System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        	
+        	//Point Select
+        	if (i==5)
+        		System.out.println ("Point Select:\n "+Student.i_selectTime ( t -> t[Student.col("id")].equals ("500000")) );
+        
+        	//Ranged Select
+        	if (i==6)
+        		System.out.println("Range Select:\n"+Student.i_selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+
         }
         else {
         /**
          * TESTING RUNTIME
          * All together, NOT IDEAL. CPU boost interferes
          */
+        	
+        	 
         	System.out.println("nested loop join:\n"+Student.joinTime ("id", "studId", Transcript));
         	
         	System.out.println("Index Join:\n"+Student.i_joinTime ("id", "studId", Transcript));
@@ -195,14 +206,52 @@ public class TestTupleGenerator
            
         	//NOTE: May Return an Empty set if Value isn't found
         	//Reason: Values are generated at random.
-        	System.out.println ("Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("500000")) );
+        	System.out.println ("Sequential Point Select:\n "+Student.selectTime ( t -> t[Student.col("id")].equals ("500000")) );
 
-        	System.out.println("Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        	System.out.println("Sequential Range Select:\n"+Student.selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        	
+        	/**
+        	 * 
+        	 * ONLY USE IF mType != MapType.NO_MAP in Table.java
+        	 */
+
+        	System.out.println ("Indexed Point Select:\n "+Student.i_selectTime ( t -> t[Student.col("id")].equals ("500000")) );
+
+        	System.out.println("Indexed Range Select:\n"+Student.i_selectTime (t -> (Integer) t[Student.col("id")] < 200000)) ;
+        	Student.i_select (t -> (Integer) t[Student.col("id")] < 200000).print();
+      
         }
-    
+        
+        /**
+         * Print Index: (Uncomment the following to print Indexes
+         * WARNING: CONSOLE CAN'T SHOW ALL OF THE INDEXES FOR LARGE NUMBER OF TUPLES 
+         */
+        
+       /*
+       Student.printIndex();
+       Professor.printIndex();
+       Course.printIndex();
+       Teaching.printIndex();
+       Transcript.printIndex();
+       */
+        
+        
         System.out.println ("-----------------END-------------------------");
      // main
-    
-    }
+ 
+        /**
+         * Use the following to print the Tables
+         * Student.h_join ("id", "studId", Transcript).print(); //To Print Hash Join
+         * Student.i_join ("id", "studId", Transcript).print();//To Print Index Join
+         * Student.join ("id", "studId", Transcript).print();//To Print nested loop join
+         * Student.select( t -> t[Student.col("id")].equals ("809530")).print();//To Print Sequential Point Select
+         * Student.select(t -> (Integer) t[Student.col("id")] < 200000).print();//To Print Sequential Range Select
+         * Student.i_select ( t -> t[Student.col("id")].equals ("500000")).print();//To Print Indexed Point Select
+         * Student.i_select (t -> (Integer) t[Student.col("id")] < 200000).print(); //To Print Indexed Range Select
+         *  
+         */
+        
+        
+}
     
 } // TestTupleGenerator
