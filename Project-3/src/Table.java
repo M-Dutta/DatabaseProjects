@@ -392,7 +392,6 @@ public class Table
 	 public Table i_join (String attributes1, String attributes2, Table table2)
 	 	{
 
-		 
 		 String [] t_attrs = attributes1.split (" ");
 	     String [] u_attrs = attributes2.split (" ");
 	     ArrayList <Integer> T1_attLoc = new ArrayList<Integer>();
@@ -894,9 +893,13 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
      * @return Runtime for i_join
      */
     
-    public long i_joinTime(String attributes1, String attributes2, Table table2) {
-		long start = System.currentTimeMillis();
-		
+    @SuppressWarnings("null")
+	public long i_joinTime(String attributes1, String attributes2, Table table2) {
+    	if (mType==MapType.NO_MAP) {
+			 System.out.println("ERROR: The Table doesn't use an Index" );
+			 return (Long) null; 	
+    	}
+    	long start = System.currentTimeMillis();
 		h_join(attributes1, attributes2, table2);
 	    long end = System.currentTimeMillis(); 
 	    long duration = end -start;
@@ -975,6 +978,11 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
      */
     
     public long i_selectTime(Predicate <Comparable []> predicate) {
+    	if (mType==MapType.NO_MAP) {
+			 System.out.println("ERROR: The Table doesn't use an Index" );
+			 return (Long) null; 	
+    	}
+    	
     	long start = System.currentTimeMillis();
     	i_select(predicate);
     	long end = System.currentTimeMillis(); 
