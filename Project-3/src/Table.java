@@ -76,7 +76,7 @@ public class Table
 
     /** The map type to be used for indices.  Change as needed.
      */
-    private static final MapType mType = MapType.TREE_MAP;
+    private static final MapType mType = MapType.NO_MAP;
     
     
     /************************************************************************************
@@ -248,8 +248,8 @@ public class Table
 
       
         
-        rows.addAll(tuples); // Include all tuples in from the referencing Table into rows.
-        for (Map.Entry<KeyType, Comparable[]> table2key : table2.index.entrySet()) //Iterate table2 keys
+        rows.addAll(tuples); // Include all tuples in from the referencing Table into rows
+        for (Map.Entry<KeyType, Comparable[]> table2key : table2.index.entrySet() ) //Iterate table2 keys
         	if (index.get(table2key.getKey()) == null) {//If referencing table (Table1) has no keys from table 2
         		rows.add(table2key.getValue()); // add the tuple into row
         	}
@@ -945,7 +945,7 @@ out.println ("RA> " + name + ".join (" + table2.name + ")");
     	select(predicate);
     	 long end = System.currentTimeMillis(); 
  	    long duration = end - start;
- 	   System.out.println ("Range Select Runtime in Milli-Seconds: ");
+ 	   System.out.println ("Select Runtime in Milli-Seconds: ");
  	    return duration;
     }
     
