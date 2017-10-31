@@ -410,9 +410,6 @@ public class BpTreeMap <K extends Comparable <K>, V>
     @SuppressWarnings("unchecked")
     private Node insert (K key, V ref, Node n)
     {
-        out.println ("=============================================================");
-        out.println ("insert: key = " + key);
-        out.println ("=============================================================");
 
         Node rt = null;                                                      // holder for right sibling
         
@@ -435,7 +432,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
             int i = n.find (key);                                            // find "<=" position
             rt = insert (key, ref, (Node) n.ref[i]);                         // recursive call to insert
-            if (DEBUG) out.println ("insert: handle internal node level");
+           // if (DEBUG) out.println ("insert: handle internal node level");
             
             
             
@@ -445,7 +442,7 @@ public class BpTreeMap <K extends Comparable <K>, V>
 
         } // if
 
-        if (DEBUG) print (root, 0);
+        //if (DEBUG) print (root, 0);
         return rt;                                                           // return right node
     } // insert
 
