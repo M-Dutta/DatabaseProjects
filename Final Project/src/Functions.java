@@ -193,23 +193,6 @@ public void listCompanies(Statement s) {
 				str.substring(0,20) );
 	} catch (SQLException e) {
 		System.out.println("list Companies===="+ e);
-	}
-	
+	}	
 }
-
-
-public static void main (String [] args) throws ClassNotFoundException, SQLException, FileNotFoundException {
-	Functions demo = new Functions();
-	
-	Class.forName(Driver);
-		Statement stmt;
-		Connection con =  DriverManager.getConnection(connectionURL+DBname,user,pswd);
-		stmt=con.createStatement();
-		demo.loadCompanies(stmt);
-		demo.listCompanies(stmt);
-		//System.out.println(Arrays.toString(companynames.toArray())); 
-		//demo.findUser(stmt,"'aj@gmail.com'");
-		//demo.addInfo(stmt);
-		//demo.addusers(stmt, "Adam","Jenson", "1990-11-05" ,"aj@gmail.com","678-90-7455" );
-	}
 }
