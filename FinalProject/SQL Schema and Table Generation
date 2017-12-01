@@ -1,29 +1,24 @@
-create schema Website;
+create schema website;
 
-create Table Website.Flights (
-Company_name varchar(25) not null,
-Flight_no varchar(25) not null,
+create table website.company_info(
+company_name varchar (35) not null,
+WebAddress varchar (35)  primary key,
+Rating varchar(5)
+);
+
+create table website.flights(
+Company_name varchar(25) ,
+Flight_no varchar(25),
 Price double not null,
-Departure_time time,
-Arrival_time time,
-primary key(Company_name, Flight_no, Departure_time)
+Departure_time time not null,
+Arrival_time time not null,
+primary key(Company_name,Flight_no,Departure_time)
 );
 
-create Table Website.Bookings (
-Fname varchar(25) not null, 
+create table website.users(
+Fname varchar(25) not null,
 Lname varchar(25) not null,
-PassengerBirthDate date not null, 
-Email varchar (50),
-Phone varchar(12),
-Confirmation varchar(20) primary key 
+BirthDate date,
+Email varchar(50) primary key,
+phone varchar(17)
 );
-
-create Table Website.Linker (
-Confirmation varchar(20) unique not null,
-Company_name Varchar(25),
-Flight_no Varchar(25),
-Departure_time time,
-foreign key (Company_name) references flights(Company_name),
-foreign key (Confirmation) references bookings(Confirmation)
-);
-
