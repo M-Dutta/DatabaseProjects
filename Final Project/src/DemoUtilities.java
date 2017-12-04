@@ -27,8 +27,9 @@ public static String Loader = "LOAD DATA LOCAL INFILE "+fileLoc
 +" into table Flights columns terminated by ' '";
 
 /************************************
-*loads Company Names not already on our company_info Table
+*loads Flights In Table
 *No need to touch
+*/
 */
 public void loadInfo(Statement s)
 {
