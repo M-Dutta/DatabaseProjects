@@ -2,8 +2,9 @@ create schema website;
 
 create table website.company_info(
 company_name varchar (35) not null,
-WebAddress varchar (35)  primary key,
-Rating varchar(5)
+WebAddress varchar (35),
+Rating varchar(25),
+primary key (company_name,WebAddress)
 );
 
 create table website.flights(
@@ -12,7 +13,9 @@ Flight_no varchar(25),
 Price double not null,
 Departure_time time not null,
 Arrival_time time not null,
-primary key(Company_name,Flight_no,Departure_time)
+Departure_city varchar(20) not null,
+Arrival_city varchar(20) not null,
+primary key(Company_name,Flight_no,Departure_time, Departure_city )
 );
 
 create table website.users(
