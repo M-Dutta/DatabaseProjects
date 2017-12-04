@@ -1,4 +1,4 @@
- import java.sql.Connection;
+ import java.sql.Connection; 
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,14 +23,18 @@ public class driver extends DemoUtilities {
 				System.out.println(e);
 			}
 			demo.listFlights(stmt,con,"","");
-			//demo.listCompanies(stmt);
-			//demo.customUpdate(stmt, "insert into company_info values('Delta Airlines','delta.com','*****');");
-			//demo.addusers(stmt);
+			demo.listCompanies(stmt);
+			//demo.customUpdate(stmt);
+			//demo.addusers(stmt,"Prashant","Doshi","1975-11-15","pdoshi@cs.uga.edu","000-00-0000");
+			//demo.addusers(stmt,"John","Wick","1970-10-23","jwick@random.com","111-11-1111");
+			//demo.addusers(stmt,"John","Qick","1965-10-23","jqick@random.com","000-00-0000");
+			//demo.addusers(stmt,"Adam","Jensen","1970-10-23","ajensen@random.com","000-00-0000");
+			//demo.findUser(stmt, "Prashant","Doshi"); // by Name
+			//demo.findUser(stmt, "ajensen@random.com""); //by Email
+			//demo.ListAllUser(stmt);
 			//demo.addInfo(stmt);
-			//demo.removeCompany(stmt, "");
-			//demo.findUser(stmt, "");
-			//demo.removeUser(stmt, "");
-		
-	
+			//demo.removeCompany(stmt, "USAirways");
+			//demo.removeUser(stmt, "pdoshi@cs.uga.edu");
+
 	}
 }
