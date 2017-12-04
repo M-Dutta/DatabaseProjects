@@ -1,11 +1,13 @@
-import java.io.FileNotFoundException; 
+
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.DriverManager; 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
+
 import java.util.Scanner;
+
+
 
 /***
  * @author Mishuk
@@ -19,38 +21,81 @@ public class Functions extends DemoUtilities {
 	
 /**************************************
  * List all Flights
- * @param s
- * s is the placeholder for statement function used in the main.
+ * @param s Statement
+ * @param con Connection
+ * @param dep Departure City
+ * @param dest Destination City
+ * use:
+ * demo.listFlights(stmt,con,"LosAngeles","Miami");
+ * s and con are place holders for statement stmt and connection con
+ *  used in the main.
+ *  
  */
-public void listFlights(Statement s) {
+public void listFlights(Statement s,Connection con, 
+		String dep, String dest) {
 	loadInfo(s); //reload info
+	Statement s2 = null;
+	loadCompanies(s); // reload Companies
+	try {
+		con = DriverManager.getConnection(connectionURL+
+					DBname,user,pswd);
+		s2= con.createStatement();
+	} catch (SQLException e1) {
+
+		System.out.println("Opening con and s2 listFlights");
+	}
+	
+	 
 	String str="";
-	for (int i =0; i < 80;i++ ) str+="_";
+	for (int i =0; i < 122;i++ ) str+="_";
 	try {
 		System.out.println("The List of Flights:");
 		System.out.println(str);
+		ResultSet r;
+		if (dep.equals("") && dest.equals(""))
+			r = s.executeQuery("select * from flights");
 		
-		ResultSet r = s.executeQuery("select * from flights");
-		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|\n","Flight Name", "Flight Number",
-				"Price", "Departure Time", "Arrival Time");
-		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|\n",str.substring(0,25),str.substring(0,14),
-				str.substring(0,6),str.substring(0,15),str.substring(0,15));
+		else if (dep.equals("") && !dest.equals(""))
+			r = s.executeQuery("select * from flights where Arrival_city='"
+					+dest+"';");
+		else if (!dep.equals("") && dest.equals(""))
+			r = s.executeQuery("select * from flights where Departure_city='"
+					+dep+"';");	
+		else 
+			r = s.executeQuery("select * from flights where Departure_city='"
+					+dep+"' and Arrival_city='"+dest+"';");
+		
+		
+		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|%-20s|%-20s|\n","Flight Name", "Flight Number",
+				"Price", "Departure Time", "Arrival Time","Departure City","Departure Time");
+		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|%-20s|%-20s|\n",str.substring(0,25),str.substring(0,14),
+				str.substring(0,6),str.substring(0,15),str.substring(0,15),str.substring(0,20),str.substring(0,20));
+		
 		while (r.next()) {
-			System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|\n",r.getString(1),r.getString(2),
-		r.getDouble(3), r.getTime(4), r.getTime(5));
-			System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|\n","","","","","");
-		
-			if ( !companynames.contains(r.getString(1)) ) {
-				companynames.add(r.getString(1));
-				s.executeUpdate("Insert into company_info"+" values('"+r.getString(1)+"','No info Available','No info Available');" );
-				
-			}
+			System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|%-20s|%-20s|\n",
+					r.getString(1),r.getString(2),r.getDouble(3), 
+					r.getTime(4), r.getTime(5),r.getString(6),
+					r.getString(7).replaceAll("[^A-Za-z0-9]"," ") );
+			System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|%-20s|%-20s|\n",
+					"","","","","","","");
+				if ( !companynames.contains(r.getString(1)) ) {
+					companynames.add(r.getString(1));
+					s2.executeUpdate("Insert into company_info"+" values('"+
+							r.getString(1)+"','No info Available','No info Available');" );
+				}
 		}
-		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|\n\n",str.substring(0,25),str.substring(0,14),
-				str.substring(0,6),str.substring(0,15),str.substring(0,15));
-
-	} catch (SQLException e) {
+		
+		System.out.printf("|%-25s|%-14s|%-6s|%-15s|%-15s|%-20s|%-20s|\n\n",str.substring(0,25),str.substring(0,14),
+				str.substring(0,6),str.substring(0,15),str.substring(0,15),str.substring(0,20),str.substring(0,20));
+		
+	}catch (SQLException e) {
 		System.out.println("List Flights "+ e);
+	}
+	try {
+		s2.close();
+		con.close();
+	} catch (SQLException e) {
+		System.out.println("Connection close : listFlights");
 	}
 }
 
@@ -70,12 +115,13 @@ try {
 			" values('"+Fname+"','"+Lname+"','"+bDate+"','"+email+"','"+phone+"');" );
 }
 	catch (SQLException e) {
-		System.out.println("add users "+e);
+		System.out.println("add users "+ e);
 	}
 }
 
 /***
- * Add Website information
+ * Add Website information 
+ * 
  * @param s
  */
 public void addInfo(Statement s) {// String compName, String webaddress, String desc) {
@@ -166,8 +212,8 @@ public void removeCompany(Statement s,String name) {
 public void customUpdate(Statement s,String update) {
 	try {
 		Scanner in = new Scanner(System.in);
-		System.out.println("Insert custom Update:");
-		update = in.nextLine();
+		System.out.println("Insert Custom Update:");
+		update= in.nextLine();
 		in.close();
 		s.executeUpdate(update);
 	} catch (SQLException e) {
@@ -175,14 +221,22 @@ public void customUpdate(Statement s,String update) {
 	}
 }
 
+/**
+ * list everything in Company_info
+ * 
+ */
 public void listCompanies(Statement s) {
 	String str="";
 	for (int i =0; i < 73;i++ ) str+="_";
+	
 	try {
+		System.out.println("Our List of Companies:");
+		System.out.print(str+"\n");
 		ResultSet r = s.executeQuery("select * from company_info");
 		
 		System.out.printf("|%-25s|%-25s|%-20s|\n","Company Name","Website","Rating(Max 5 Stars)" );
 		
+
 		System.out.printf("|%-25s|%-25s|%-20s|\n",str.substring(0,25),str.substring(0,25),
 				str.substring(0,20) );
 		while (r.next()) {
