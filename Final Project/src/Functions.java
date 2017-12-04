@@ -153,7 +153,7 @@ public void addInfo(Statement s) {// String compName, String webaddress, String 
  */
 public void findUser(Statement s,String email) {
 	try {
-		ResultSet r = s.executeQuery("Select * from users where Email="+email);
+		ResultSet r = s.executeQuery("Select * from users where Email='"+email+"';");
 		String str="";
 		for (int i =0; i < 113;i++ ) str+="_";
 		
@@ -184,13 +184,92 @@ System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n","First Name",
 }	
 
 /********
+ * FindUSer by Name
+ * @param s
+ * @param fname
+ * @param lname
+ */
+public void findUser(Statement s,String fname,String lname) {
+	try {
+		ResultSet r = s.executeQuery("Select * from users where Fname='"+fname+
+				"' and Lname='"+lname+"';");
+		String str="";
+		for (int i =0; i < 113;i++ ) str+="_";
+		
+System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n","First Name",
+		"Last Name","Birth Date","Email","Phone Number" );
+		
+		System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n",
+				str.substring(0,25),str.substring(0,25),
+				str.substring(0,15), str.substring(0,30),
+				str.substring(0,13));
+		
+		while (r.next()) {
+			System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n", 
+					r.getString(1), r.getString(2),r.getDate(3),
+					r.getString(4), r.getString(5));
+			
+			System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n"
+					,"","","","","");
+		}
+		System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n",
+				str.substring(0,25),str.substring(0,25),
+				str.substring(0,15), str.substring(0,30),
+				str.substring(0,13));
+		
+	} catch (SQLException e) {
+		System.out.println("Find User "+ e);
+	}
+}	
+
+/**
+ * List All users
+ * @param s
+ */
+
+public void ListAllUser(Statement s) {
+	try {
+		ResultSet r = s.executeQuery("Select * from users");
+		String str="";
+		for (int i =0; i < 113;i++ ) str+="_";
+		
+System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n","First Name",
+		"Last Name","Birth Date","Email","Phone Number" );
+		
+		System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n",
+				str.substring(0,25),str.substring(0,25),
+				str.substring(0,15), str.substring(0,30),
+				str.substring(0,13));
+		
+		while (r.next()) {
+			System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n", 
+					r.getString(1), r.getString(2),r.getDate(3),
+					r.getString(4), r.getString(5));
+			
+			System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n"
+					,"","","","","");
+		}
+		System.out.printf("|%-25s|%-25s|%-15s|%-30s|%-13s|\n",
+				str.substring(0,25),str.substring(0,25),
+				str.substring(0,15), str.substring(0,30),
+				str.substring(0,13));
+		
+	} catch (SQLException e) {
+		System.out.println("Find User "+ e);
+	}
+	
+}
+
+
+
+/********
  * 
  * @param s
  * @param email
  */
 public void removeUser(Statement s,String email) {
 	try {
-		s.executeUpdate("Delete from users where Email="+email);
+		s.executeUpdate("Delete from users where Email='"+email+"'");
 	} catch (SQLException e) {
 		System.out.println("removeUser " + e);
 	}
@@ -198,7 +277,7 @@ public void removeUser(Statement s,String email) {
 
 public void removeCompany(Statement s,String name) {
 	try {
-		s.executeUpdate("Delete from company_info where Compnay_name="+name);
+		s.executeUpdate("Delete from company_info where Company_name='"+name+"'");
 	} catch (SQLException e) {
 		System.out.println("removeCompany "+e);
 	}
@@ -209,8 +288,9 @@ public void removeCompany(Statement s,String name) {
  * @param s
  * @param update
  */
-public void customUpdate(Statement s,String update) {
+public void customUpdate(Statement s) {
 	try {
+		String update="";
 		Scanner in = new Scanner(System.in);
 		System.out.println("Insert Custom Update:");
 		update= in.nextLine();
