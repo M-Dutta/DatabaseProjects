@@ -1,7 +1,7 @@
 /*
  * List the names of students who have taken all courses offered by department v8 (deptId)
  */
-SET @v8 = 'deptId';
+SET @v8 = 'deptId324641';
 
 SELECT s.name
 FROM student as s
